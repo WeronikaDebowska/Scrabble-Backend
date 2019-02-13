@@ -1,13 +1,14 @@
 package com.codecool.scrabble.Controller;
 
 import com.codecool.scrabble.Model.Board;
-import com.codecool.scrabble.Model.Word;
+//import com.codecool.scrabble.Model.Word;
 import com.codecool.scrabble.Model.Cell;
+import com.codecool.scrabble.Model.ResponseAfterMove;
 import com.codecool.scrabble.Model.WordDetails;
 import com.codecool.scrabble.Service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
+//import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,21 +28,23 @@ import java.util.Map;
 public class GameRestController {
 
 
-    private MockDictionaryService dictService;
+    private DictionaryServiceImpl dictService;
     private DrawService drawService;
     private PointsCounterService pointsService;
     private MoveValidatorImpl moveValidator;
-    private String message;
+    private ResponseAfterMove responseAfterMove;
 
     @Autowired
-    public GameRestController(MockDictionaryService dictService,
+    public GameRestController(DictionaryServiceImpl dictService,
                               PointsCounterService pointsService,
                               DrawService drawService,
-                              MoveValidatorImpl moveValidatorService) {
+                              MoveValidatorImpl moveValidatorService,
+                              ResponseAfterMove responseAfterMove) {
         this.dictService = dictService;
         this.pointsService = pointsService;
         this.drawService = drawService;
         this.moveValidator = moveValidatorService;
+        this.responseAfterMove = responseAfterMove;
     }
 
     @PostMapping
@@ -53,7 +56,10 @@ public class GameRestController {
 
 
     @PostMapping(path = "/board")
-    public void postWord(@RequestBody Board words) {
+    public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board words) {
+
+        ResponseAfterMove response = new ResponseAfterMove();
+
         Board newBoard = new Board();
         for (Cell cell : words.getBoard()) {
             int cellIndex = cell.getCellIndex();
@@ -63,20 +69,30 @@ public class GameRestController {
         }
 
         moveValidator.setNewBoard(newBoard);
+
         LinkedList<String> foundWords = moveValidator.checkMoveValidity();
         LinkedList<Cell> newCells = moveValidator.getNewCells();
 
         for (String foundWord : foundWords) {
-            System.out.println("nowe słowo " + foundWord);
 
+            WordDetails composedWord = new WordDetails();
 
             if (dictService.isWordInDict(foundWord)) {
-                System.out.println("znalezione w bazie!");
-                int score = pointsService.countWordScore(foundWord, newCells);
-                System.out.println("SCORE " + score);
+
+                composedWord.setValid(true);
+                composedWord.setWord(foundWord);
+                composedWord.setPoints(pointsService.countWordScore(foundWord, newCells));
+                response.addWord(composedWord);
+                response.setActualBoard(moveValidator.getNewBoard());
+            } else {
+                composedWord.setValid(false);
+                composedWord.setWord(foundWord);
+                composedWord.setPoints(0);
             }
         }
+
         moveValidator.updateState();
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 

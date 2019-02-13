@@ -5,7 +5,7 @@ import com.codecool.scrabble.Model.Word;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-//@Service("DictionaryServiceImpl")
+@Service("DictionaryServiceImpl")
 public class DictionaryServiceImpl implements DictionaryService {
 
     private DictionaryRepository dictRepository;
