@@ -2,19 +2,18 @@ package com.codecool.scrabble.Model;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 @Component
 public class ResponseAfterMove {
 
-
-    private Board actualBoard;
+    private boolean isMoveValid;
     private LinkedList<WordDetails> wordsDetails = new LinkedList<>();
     private LinkedList<String> messages = new LinkedList<>();
     private String user;
     private int totalScore;
     private int roundScore;
+    private Board actualBoard;
 
 
     public String getUser() {
@@ -72,6 +71,21 @@ public class ResponseAfterMove {
 
     public void setMessages(LinkedList<String> messages) {
         this.messages = messages;
+    }
+
+    public void setValidity() {
+        for (WordDetails wordDetails : wordsDetails) {
+            if (!wordDetails.isValid()) {
+                isMoveValid = false;
+                setRoundScore(0);
+                break;
+            }
+        }
+        isMoveValid = true;
+    }
+
+    public void increaseRoundScore(int points) {
+        roundScore += points;
     }
 
 

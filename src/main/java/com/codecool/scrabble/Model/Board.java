@@ -2,13 +2,12 @@ package com.codecool.scrabble.Model;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-
 @Component
 public class Board {
 
     private int size = 15;
     private Cell[] board = new Cell[size * size];
+
 
     public Board() {
         createBoard();
@@ -16,92 +15,45 @@ public class Board {
     }
 
     private void createBoard() {
-        int index = 0;
-        int k = 0;
+        int indexInc = 100;
+        int i = 0;
 
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
-                board[k] = new Cell();
-                board[k].setCellIndex(index + j);
-                k++;
+        for (int row = 0; row < size; row++) {
+            for (int column = 0; column < size; column++) {
+                board[i] = new Cell();
+                board[i].setCellIndex(row * indexInc + column);
+                i++;
             }
-            index += 100;
         }
     }
 
     private void setBonuses() {
 
-        //set Letter bonuses
-        //2
-        setLetterBonus(4, 2);
-        setLetterBonus(11, 2);
-        setLetterBonus(206, 2);
-        setLetterBonus(208, 2);
-        setLetterBonus(300, 2);
-        setLetterBonus(307, 2);
-        setLetterBonus(314, 2);
-        setLetterBonus(602, 2);
-        setLetterBonus(606, 2);
-        setLetterBonus(608, 2);
-        setLetterBonus(612, 2);
-        setLetterBonus(703, 2);
-        setLetterBonus(711, 2);
-        setLetterBonus(802, 2);
-        setLetterBonus(806, 2);
-        setLetterBonus(808, 2);
-        setLetterBonus(812, 2);
-        setLetterBonus(1100, 2);
-        setLetterBonus(1107, 2);
-        setLetterBonus(1114, 2);
-        setLetterBonus(1206, 2);
-        setLetterBonus(1208, 2);
-        setLetterBonus(1404, 2);
-        setLetterBonus(1411, 2);
+        int[] cellsIndexesWithDoubleLetterBonus = new int[]{4, 11, 206, 208, 300, 307, 314, 602, 606, 608, 612,
+                703, 711, 802, 808, 812, 1100, 1107, 1114, 1206, 1208, 1404, 1411};
 
-        //3
+        int[] cellIndexesWithTripleLetterBonus = new int[]{105, 109, 501, 509, 513, 901, 905, 909, 913, 1405, 1409};
 
-        setLetterBonus(105, 3);
-        setLetterBonus(109, 3);
-        setLetterBonus(501, 3);
-        setLetterBonus(505, 3);
-        setLetterBonus(509, 3);
-        setLetterBonus(513, 3);
-        setLetterBonus(901, 3);
-        setLetterBonus(905, 3);
-        setLetterBonus(909, 3);
-        setLetterBonus(913, 3);
-        setLetterBonus(1405, 3);
-        setLetterBonus(1409, 3);
+        int[] cellIndexesWithDoubleWordBonus = new int[]{101, 113, 202, 212, 303, 311, 404, 410, 1004, 1010, 1103,
+                1111, 1202, 1212, 1301, 1313};
 
-        //set word bonuses
-        //2
-        setWordBonus(101, 2);
-        setWordBonus(113, 2);
-        setWordBonus(202, 2);
-        setWordBonus(212, 2);
-        setWordBonus(303, 2);
-        setWordBonus(311, 2);
-        setWordBonus(404, 2);
-        setWordBonus(410, 2);
+        int[] cellIndexesWithTripleWordBonus = new int[]{0, 7, 14, 700, 714, 1400, 1407, 1414};
 
-        setWordBonus(1004, 2);
-        setWordBonus(1010, 2);
-        setWordBonus(1103, 2);
-        setWordBonus(1111, 2);
-        setWordBonus(1202, 2);
-        setWordBonus(1212, 2);
-        setWordBonus(1301, 2);
-        setWordBonus(1313, 2);
+        for (int index : cellsIndexesWithDoubleLetterBonus) {
+            getCellByIndex(index).setLetterBonus(2);
+        }
 
-        //3
-        setWordBonus(0, 3);
-        setWordBonus(7, 3);
-        setWordBonus(14, 3);
-        setWordBonus(700, 3);
-        setWordBonus(714, 3);
-        setWordBonus(1400, 3);
-        setWordBonus(1407, 3);
-        setWordBonus(1414, 3);
+        for (int index : cellIndexesWithTripleLetterBonus) {
+            getCellByIndex(index).setLetterBonus(3);
+        }
+
+        for (int index : cellIndexesWithDoubleWordBonus) {
+            getCellByIndex(index).setWordBonus(2);
+        }
+
+        for (int index : cellIndexesWithTripleWordBonus) {
+            getCellByIndex(index).setWordBonus(3);
+        }
     }
 
 
@@ -112,10 +64,7 @@ public class Board {
                 return cell;
             }
         }
-
         return null;
-//        return (Cell) Arrays.stream(board)
-//                .filter(c -> c.getCellIndex() == index);
     }
 
     public int getLetterBonus(int index) {
@@ -145,9 +94,5 @@ public class Board {
         this.board = board;
     }
 
-    public void printBoard() {
-        Arrays.stream(board)
-                .peek(c -> System.out.println(c.getCellIndex()));
-    }
 
 }

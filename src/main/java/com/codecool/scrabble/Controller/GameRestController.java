@@ -78,18 +78,24 @@ public class GameRestController {
             WordDetails composedWord = new WordDetails();
 
             if (dictService.isWordInDict(foundWord)) {
+                int wordPoints = pointsService.countWordScore(foundWord, newCells);
 
                 composedWord.setValid(true);
                 composedWord.setWord(foundWord);
-                composedWord.setPoints(pointsService.countWordScore(foundWord, newCells));
+
+                composedWord.setPoints(wordPoints);
                 response.addWord(composedWord);
                 response.setActualBoard(moveValidator.getNewBoard());
+                response.increaseRoundScore(wordPoints);
             } else {
                 composedWord.setValid(false);
                 composedWord.setWord(foundWord);
                 composedWord.setPoints(0);
+                response.addWord(composedWord);
             }
         }
+
+        response.setValidity();
 
         moveValidator.updateState();
         return new ResponseEntity<>(response, HttpStatus.OK);
