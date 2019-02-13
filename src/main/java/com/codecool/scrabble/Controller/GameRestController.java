@@ -105,8 +105,11 @@ public class GameRestController {
     }
 
     @PostMapping(path = "/draw")
-    public void getBackLetters(@RequestBody Character[] letters) {
+    public ResponseEntity<String> getBackLetters(@RequestBody Character[] letters) {
         drawService.getLettersBack(letters);
+        int size = letters.length;
+        return new ResponseEntity<>(size + " literki oddane", HttpStatus.OK);
+
 
     }
 
