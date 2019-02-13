@@ -2,10 +2,8 @@ package com.codecool.scrabble.Model;
 
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.Stream;
+
 
 @Component
 public class LetterParams {
@@ -54,26 +52,21 @@ public class LetterParams {
 
     }
 
-
     public int getPoints(char letter) {
         return letterPointsAmount.get(letter)[0];
     }
 
-    public int getInitialAmount(char letter) {
+    int getInitialAmount(char letter) {
         return letterPointsAmount.get(letter)[1];
     }
 
-    public Character[] getAllLetters() {
-        Character[] allLetters = new Character[32];
+    Character[] getAllLetters() {
+        Character[] allLetters = new Character[letterPointsAmount.size()];
         int i = 0;
         for (Character letterKey : letterPointsAmount.keySet()) {
-            allLetters[i] = (Character) letterKey;
+            allLetters[i] = letterKey;
             i++;
         }
-//        Character[] allLetters = (Character[])letterPointsAmount.keySet().toArray();
-//                letterPointsAmount.keySet().toArray(new Character[]{});
-
-//        return (Character[]) letterPointsAmount.keySet().toArray();
         return allLetters;
 
     }
