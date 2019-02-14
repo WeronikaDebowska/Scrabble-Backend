@@ -61,7 +61,7 @@ public class LetterPool {
     }
 
 
-    public void gettLetterBack(Character letter) {
+    public void getLetterBack(Character letter) {
         letterPool.add(letter);
     }
 
