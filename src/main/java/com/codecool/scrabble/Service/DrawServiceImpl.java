@@ -23,7 +23,7 @@ public class DrawServiceImpl implements DrawService {
         Character[] drawnLetters = new Character[number];
         for (int i = 0; i < number; i++) {
             if (!pool.isPoolEmpty()) {
-                drawnLetters[i] = pool.takeLetterFromPool();
+                drawnLetters[i] = Character.toUpperCase(pool.takeLetterFromPool());
             }
         }
         return drawnLetters;
