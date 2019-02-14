@@ -20,40 +20,13 @@ public class MoveValidatorImpl implements MoveValidatorService {
 
 
     @Autowired
-    public MoveValidatorImpl(Board oldBoard) {
-        this.oldBoard = oldBoard;
-        oldBoard.getCellByIndex(0).setLetter('a');
-        oldBoard.getCellByIndex(1).setLetter('b');
-        oldBoard.getCellByIndex(2).setLetter('c');
-        oldBoard.getCellByIndex(102).setLetter('y');
-        oldBoard.getCellByIndex(202).setLetter('n');
-        oldBoard.getCellByIndex(302).setLetter('i');
-        oldBoard.getCellByIndex(402).setLetter('k');
-        oldBoard.getCellByIndex(100).setLetter('t');
-        oldBoard.getCellByIndex(200).setLetter('o');
-        oldBoard.getCellByIndex(300).setLetter('m');
-        oldBoard.getCellByIndex(203).setLetter('o');
-        oldBoard.getCellByIndex(204).setLetter('w');
-        oldBoard.getCellByIndex(205).setLetter('y');
-        oldBoard.getCellByIndex(206).setLetter('m');
-        oldBoard.getCellByIndex(207).setLetter('i');
-        oldBoard.getCellByIndex(4).setLetter('n');
-        oldBoard.getCellByIndex(104).setLetter('a');
-        oldBoard.getCellByIndex(304).setLetter('a');
-        oldBoard.getCellByIndex(107).setLetter('p');
-        oldBoard.getCellByIndex(307).setLetter('k');
-        oldBoard.getCellByIndex(407).setLetter('i');
-        oldBoard.getCellByIndex(507).setLetter('e');
-        oldBoard.getCellByIndex(607).setLetter('t');
-        oldBoard.getCellByIndex(707).setLetter('a');
-
-
+    public MoveValidatorImpl(Board board) {
+        this.oldBoard = board;
     }
 
     @Override
     public LinkedList<String> checkMoveValidity() {
         newCells.clear();
-//        newWord = "";
 
         System.out.println();
         trialBoardPrint();
@@ -71,7 +44,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
     public void compareBoards() {
 
         for (Cell newCell : newBoard.getBoard()) {
-            if (newCell.getLetter() != oldBoard.getCellByIndex(newCell.getCellIndex()).getLetter()) {
+            if (!newCell.getLetter().equals(oldBoard.getCellByIndex(newCell.getCellIndex()).getLetter())) {
                 newCells.add(newCell);
             }
         }
