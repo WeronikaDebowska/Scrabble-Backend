@@ -18,7 +18,6 @@ public class LetterPool {
         this.letterParams = letterParams;
         initializeLetterPool();
         randomizePool();
-//        createLetterPoints();
     }
 
 

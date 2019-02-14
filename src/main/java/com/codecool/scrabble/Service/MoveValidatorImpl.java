@@ -68,24 +68,6 @@ public class MoveValidatorImpl implements MoveValidatorService {
         return newWords;
     }
 
-    private void trialBoardPrint() {
-
-        System.out.println("  -------- oldBoard --------       -------- newBoard --------");
-
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
-                System.out.print(" " + oldBoard.getBoard()[i * 15 + j].getLetter());
-            }
-            System.out.print("   ");
-
-            for (int j = 0; j < 15; j++) {
-                System.out.print(" " + newBoard.getBoard()[i * 15 + j].getLetter());
-            }
-
-            System.out.println();
-        }
-    }
-
     public void compareBoards() {
 
         for (Cell newCell : newBoard.getBoard()) {
@@ -328,6 +310,23 @@ public class MoveValidatorImpl implements MoveValidatorService {
     private enum WordOrientation {
         VERTICAL,
         HORIZONTAL;
+    }
+
+
+    private void trialBoardPrint() {
+
+        System.out.println("  -------- oldBoard --------       -------- newBoard --------");
+
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                System.out.print(" " + oldBoard.getBoard()[i * 15 + j].getLetter());
+            }
+            System.out.print("   ");
+            for (int j = 0; j < 15; j++) {
+                System.out.print(" " + newBoard.getBoard()[i * 15 + j].getLetter());
+            }
+            System.out.println();
+        }
     }
 
 }

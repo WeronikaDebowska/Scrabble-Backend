@@ -29,8 +29,6 @@ public class DrawServiceImpl implements DrawService {
     public void getLettersBack(Character[] letters) {
         for (Character letter : letters) {
             pool.gettLetterBack(letter);
-            System.out.println(letter);
-            System.out.println(pool.countAllLettersInPool());
         }
     }
 }

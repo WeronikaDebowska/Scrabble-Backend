@@ -1,25 +1,18 @@
 package com.codecool.scrabble.Controller;
 
 import com.codecool.scrabble.Model.Board;
-//import com.codecool.scrabble.Model.Word;
 import com.codecool.scrabble.Model.Cell;
 import com.codecool.scrabble.Model.ResponseAfterMove;
 import com.codecool.scrabble.Model.WordDetails;
 import com.codecool.scrabble.Service.*;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-//import net.bytebuddy.dynamic.scaffold.MethodGraph;
-import org.apache.tomcat.util.json.JSONParser;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -28,14 +21,19 @@ import java.util.Map;
 public class GameRestController {
 
 
-    private DictionaryServiceImpl dictService;
+    //    private DictionaryServiceImpl dictService;
+    private MockDictionaryService dictService;
+
+
     private DrawService drawService;
     private PointsCounterService pointsService;
     private MoveValidatorImpl moveValidator;
     private ResponseAfterMove responseAfterMove;
 
     @Autowired
-    public GameRestController(DictionaryServiceImpl dictService,
+    public GameRestController(
+//            DictionaryServiceImpl dictService,
+            MockDictionaryService dictService,
                               PointsCounterService pointsService,
                               DrawService drawService,
                               MoveValidatorImpl moveValidatorService,
@@ -54,7 +52,6 @@ public class GameRestController {
         }
     }
 
-
     @PostMapping(path = "/board")
     public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board words) {
 
@@ -65,9 +62,7 @@ public class GameRestController {
             int cellIndex = cell.getCellIndex();
             char cellLetter = cell.getLetter();
             newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
-
         }
-
         moveValidator.setNewBoard(newBoard);
 
         LinkedList<String> foundWords = moveValidator.checkMoveValidity();
@@ -94,20 +89,16 @@ public class GameRestController {
                 response.addWord(composedWord);
             }
         }
-
         response.setValidity();
 
         moveValidator.updateState();
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
-
 
     @GetMapping(path = "/draw")
     public ResponseEntity<Character[]> drawLetters(@RequestParam(value = "draw", defaultValue = "7") int number) {
         Character[] drawnLetters = drawService.drawLetters(number);
         return new ResponseEntity<>(drawnLetters, HttpStatus.OK);
-
     }
 
     @PostMapping(path = "/draw")
@@ -115,9 +106,5 @@ public class GameRestController {
         drawService.getLettersBack(letters);
         int size = letters.length;
         return new ResponseEntity<>(size + " literki oddane", HttpStatus.OK);
-
-
     }
-
-
 }

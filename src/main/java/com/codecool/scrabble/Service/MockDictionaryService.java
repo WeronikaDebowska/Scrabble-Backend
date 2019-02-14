@@ -9,7 +9,6 @@ public class MockDictionaryService implements DictionaryService {
 
     private ArrayList<String> dictionary = new ArrayList<String>();
 
-
     public MockDictionaryService() {
         dictionary.add("aa");
         dictionary.add("aaa");
@@ -39,9 +38,6 @@ public class MockDictionaryService implements DictionaryService {
         dictionary.add("rata");
 
     }
-
-    ;
-
 
     @Override
     public Boolean isWordInDict(String word) {
