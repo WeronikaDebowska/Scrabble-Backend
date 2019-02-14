@@ -16,6 +16,10 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     public Character[] drawLetters(int number) {
+        int lettersAmount = pool.countAllLettersInPool();
+        if (pool.countAllLettersInPool() < number) {
+            number = lettersAmount;
+        }
         Character[] drawnLetters = new Character[number];
         for (int i = 0; i < number; i++) {
             if (!pool.isPoolEmpty()) {
