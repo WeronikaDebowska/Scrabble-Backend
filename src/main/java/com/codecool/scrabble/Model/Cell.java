@@ -52,7 +52,23 @@ public class Cell {
         this.cellIndex = cellIndex;
     }
 
-    public boolean cellContainsLetter() {
+    public boolean containsLetter() {
         return this.getLetter() != '-';
+    }
+
+    public boolean inFirstRow() {
+        return (this.getCellIndex() <= 14);
+    }
+
+    public boolean inLastRow() {
+        return (this.getCellIndex() >= 1400);
+    }
+
+    public boolean inFirstColumn() {
+        return (this.getCellIndex() % 100 == 0);
+    }
+
+    public boolean inLastColumn() {
+        return (this.getCellIndex() % 100 == 14);
     }
 }
