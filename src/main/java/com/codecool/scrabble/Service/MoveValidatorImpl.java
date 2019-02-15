@@ -41,7 +41,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
         return newWords;
     }
 
-    public void compareBoards() {
+    private void compareBoards() {
 
         for (Cell newCell : newBoard.getBoard()) {
             if (!newCell.getLetter().equals(oldBoard.getCellByIndex(newCell.getCellIndex()).getLetter())) {
@@ -50,12 +50,13 @@ public class MoveValidatorImpl implements MoveValidatorService {
         }
     }
 
-    public WordOrientation checkNewWordOrientation() {
+    private WordOrientation checkNewWordOrientation() {
 
         if ((newCells.getLast().getCellIndex() - newCells.getFirst().getCellIndex()) % 100 == 0) {
             return WordOrientation.VERTICAL;
         }
-        if (Math.floor(newCells.getLast().getCellIndex() / 100) == Math.floor(newCells.getFirst().getCellIndex() / 100)) {
+        if (newCells.getLast().getCellIndex() - newCells.getFirst().getCellIndex() < 14) {
+//                Math.floor(newCells.getLast().getCellIndex() / 100) == Math.floor(newCells.getFirst().getCellIndex() / 100)) {
             return WordOrientation.HORIZONTAL;
         }
         return null;
@@ -72,17 +73,18 @@ public class MoveValidatorImpl implements MoveValidatorService {
         int firstNewLetterIndex = newCells.getFirst().getCellIndex();
         int lastNewLetterIndex = newCells.getLast().getCellIndex();
 
-        if (newCells.size() == 1) {
+        if (onlyOneLetterAdded()) {
 
-            int singleLetterIndex = newCells.get(0).getCellIndex();
-            if ((!oldBoard.getCellByIndex(singleLetterIndex).inFirstColumn() && oldBoard.getCellByIndex(singleLetterIndex - 1).containsLetter())
-                    || (!oldBoard.getCellByIndex(singleLetterIndex).inLastColumn() && oldBoard.getCellByIndex(singleLetterIndex + 1).containsLetter())) {
+            Cell singleLetterCell = newCells.get(0);
+
+            if (anyLetterNextToHorizontally(singleLetterCell)) {
+
                 firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, WordOrientation.HORIZONTAL);
                 lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, WordOrientation.HORIZONTAL);
                 findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.HORIZONTAL);
             }
-            if ((!oldBoard.getCellByIndex(singleLetterIndex).inFirstRow() && oldBoard.getCellByIndex(singleLetterIndex - 100).containsLetter())
-                    || (!oldBoard.getCellByIndex(singleLetterIndex).inLastRow() && oldBoard.getCellByIndex(singleLetterIndex + 100).containsLetter())) {
+            if (annyLetterNextToVertically(singleLetterCell)) {
+
                 firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, WordOrientation.VERTICAL);
                 lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, WordOrientation.VERTICAL);
                 findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.VERTICAL);
@@ -91,11 +93,27 @@ public class MoveValidatorImpl implements MoveValidatorService {
         } else {
 
             WordOrientation orientation = checkNewWordOrientation();
+
             firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, orientation);
             lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, orientation);
             findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, orientation);
+
             findAdditionalWord(orientation);
         }
+    }
+
+    private boolean annyLetterNextToVertically(Cell singleLetterCell) {
+        return (!singleLetterCell.inFirstRow() && oldBoard.getCellAbove(singleLetterCell).containsLetter())
+                || (!singleLetterCell.inLastRow() && oldBoard.getCellBellow(singleLetterCell).containsLetter());
+    }
+
+    private boolean anyLetterNextToHorizontally(Cell singleLetterCell) {
+        return (!singleLetterCell.inFirstColumn() && oldBoard.getCellLeft(singleLetterCell).containsLetter())
+                || (!singleLetterCell.inLastColumn() && oldBoard.getCellRight(singleLetterCell).containsLetter());
+    }
+
+    private boolean onlyOneLetterAdded() {
+        return newCells.size() == 1;
     }
 
     private int findFirstLetterOfNewWordIndex(int firstNewLetterIndex, WordOrientation orientation) {
@@ -147,7 +165,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
                     Cell nextCell = newBoard.getCellByIndex(lastNewLetterIndex + i);
                     while ((lastNewLetterIndex + i) % 100 <= 14 && nextCell.containsLetter()) {
                         nextCell = newBoard.getCellByIndex(lastNewLetterIndex + i);
-                        if (nextCell.getLetter() != '-') {
+                        if (nextCell.containsLetter()) {
                             endingCell = nextCell;
                         }
                         i++;
@@ -179,13 +197,13 @@ public class MoveValidatorImpl implements MoveValidatorService {
                 for (int cellIndex = firstNewLetterIndex; cellIndex <= lastNewLetterIndex; cellIndex++) {
                     newWord.append(newBoard.getCellByIndex(cellIndex).getLetter());
                 }
-                newWords.add(newWord.toString());
+                newWords.add(newWord.toString().toLowerCase());
                 break;
             case VERTICAL:
                 for (int cellIndex = firstNewLetterIndex; cellIndex <= lastNewLetterIndex; cellIndex += 100) {
                     newWord.append(newBoard.getCellByIndex(cellIndex).getLetter());
                 }
-                newWords.add(newWord.toString());
+                newWords.add(newWord.toString().toLowerCase());
                 break;
         }
     }

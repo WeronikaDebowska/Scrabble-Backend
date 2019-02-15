@@ -67,6 +67,22 @@ public class Board {
         return null;
     }
 
+    public Cell getCellAbove(Cell cell) {
+        return this.getCellByIndex(cell.getCellIndex() - 100);
+    }
+
+    public Cell getCellBellow(Cell cell) {
+        return this.getCellByIndex(cell.getCellIndex() + 100);
+    }
+
+    public Cell getCellRight(Cell cell) {
+        return this.getCellByIndex(cell.getCellIndex() + 1);
+    }
+
+    public Cell getCellLeft(Cell cell) {
+        return this.getCellByIndex(cell.getCellIndex() - 1);
+    }
+
     public int getLetterBonus(int index) {
         Cell cell = getCellByIndex(index);
         return cell.getLetterBonus();
