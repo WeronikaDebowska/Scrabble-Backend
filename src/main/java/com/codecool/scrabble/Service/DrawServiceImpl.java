@@ -32,7 +32,7 @@ public class DrawServiceImpl implements DrawService {
     @Override
     public void getLettersBack(Character[] letters) {
         for (Character letter : letters) {
-            pool.getLetterBack(Character.toUpperCase(letter));
+            pool.getLetterBack(Character.toLowerCase(letter));
         }
     }
 }
