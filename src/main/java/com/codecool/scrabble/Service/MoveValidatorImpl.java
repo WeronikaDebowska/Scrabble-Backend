@@ -106,7 +106,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
                 if (firstNewLetterIndex % 100 > 0) {
                     int i = 1;
                     Cell previousCell = newBoard.getCellByIndex(firstNewLetterIndex - i);
-                    while ((firstNewLetterIndex - i) % 100 > 0 && !previousCell.getLetter().equals('-')) {
+                    while ((firstNewLetterIndex - i) % 100 >= 0 && previousCell.cellContainsLetter()) {
                         previousCell = newBoard.getCellByIndex(firstNewLetterIndex - i);
                         if (previousCell.cellContainsLetter()) {
                             beginningCell = previousCell;
@@ -122,7 +122,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
                 if (firstNewLetterIndex >= 100) {
                     int j = 1;
                     Cell previousCell = newBoard.getCellByIndex(firstNewLetterIndex - j * 100);
-                    while (firstNewLetterIndex - j * 100 >= 0 && !previousCell.getLetter().equals('-')) {
+                    while (firstNewLetterIndex - j * 100 >= 0 && previousCell.cellContainsLetter()) {
                         previousCell = newBoard.getCellByIndex(firstNewLetterIndex - j * 100);
                         if (previousCell.cellContainsLetter()) {
                             beginningCell = previousCell;
@@ -145,7 +145,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
                 if (lastNewLetterIndex % 100 < 14) {
                     int i = 1;
                     Cell nextCell = newBoard.getCellByIndex(lastNewLetterIndex + i);
-                    while ((lastNewLetterIndex + i) % 100 < 14 && nextCell.cellContainsLetter()) {
+                    while ((lastNewLetterIndex + i) % 100 <= 14 && nextCell.cellContainsLetter()) {
                         nextCell = newBoard.getCellByIndex(lastNewLetterIndex + i);
                         if (nextCell.getLetter() != '-') {
                             endingCell = nextCell;
@@ -159,7 +159,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
                 if (lastNewLetterIndex < 1400) {
                     int j = 1;
                     Cell nextCell = newBoard.getCellByIndex(lastNewLetterIndex + j * 100);
-                    while (lastNewLetterIndex + j * 100 < 1400 && nextCell.cellContainsLetter()) {
+                    while (lastNewLetterIndex + j * 100 <= 1414 && nextCell.cellContainsLetter()) {
                         nextCell = newBoard.getCellByIndex(lastNewLetterIndex + j * 100);
                         if (nextCell.cellContainsLetter()) {
                             endingCell = nextCell;
