@@ -62,8 +62,10 @@ public class MoveValidatorImpl implements MoveValidatorService {
         return null;
     }
 
-    public void updateState() {
-        oldBoard = newBoard;
+    public void updateState(boolean valid) {
+        if (valid) {
+            oldBoard = newBoard;
+        }
         newCells.clear();
         newWords.clear();
     }

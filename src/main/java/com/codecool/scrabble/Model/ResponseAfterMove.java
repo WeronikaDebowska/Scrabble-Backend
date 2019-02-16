@@ -73,15 +73,16 @@ public class ResponseAfterMove {
         this.messages = messages;
     }
 
-    public void setValidity() {
+    public boolean setValidity() {
         for (WordDetails wordDetails : wordsDetails) {
             if (!wordDetails.isValid()) {
                 isMoveValid = false;
                 setRoundScore(0);
-                break;
+                return false;
             }
         }
         isMoveValid = true;
+        return true;
     }
 
     public void increaseRoundScore(int points) {
