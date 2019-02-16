@@ -14,10 +14,13 @@ public class PointsCounterServiceImpl implements PointsCounterService {
     private LetterPool pool;
     private LetterParams letterParams;
 
+    private int roundScore;
+
     @Autowired
     public PointsCounterServiceImpl(LetterPool pool, LetterParams letterParams) {
         this.pool = pool;
         this.letterParams = letterParams;
+        this.roundScore = 0;
     }
 
     @Override
@@ -46,5 +49,21 @@ public class PointsCounterServiceImpl implements PointsCounterService {
         }
         wordScore *= wordBonus;
         return wordScore;
+    }
+
+    public void addToRoundScore(int points) {
+        roundScore += points;
+    }
+
+    public int getRoundScore() {
+        return roundScore;
+    }
+
+    public void setRoundScore(int roundScore) {
+        this.roundScore = roundScore;
+    }
+
+    public void clearScore() {
+        roundScore = 0;
     }
 }

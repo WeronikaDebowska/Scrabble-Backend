@@ -11,7 +11,7 @@ public class ResponseAfterMove {
     private LinkedList<WordDetails> wordsDetails = new LinkedList<>();
     private LinkedList<String> messages = new LinkedList<>();
     private String user;
-    private int totalScore;
+    private int totalScore = 0;
     private int roundScore;
     private Board actualBoard;
 
@@ -87,6 +87,17 @@ public class ResponseAfterMove {
 
     public void increaseRoundScore(int points) {
         roundScore += points;
+    }
+
+    public void clearRoundParams() {
+        isMoveValid = false;
+        wordsDetails.clear();
+        messages.clear();
+        roundScore = 0;
+    }
+
+    public void addToTotalScore(int points) {
+        totalScore += points;
     }
 
 
