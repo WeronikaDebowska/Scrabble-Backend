@@ -54,25 +54,20 @@ public class GameRestController {
     }
 
     @PostMapping(path = "/board")
-    public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board words, User user) {
+    public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board board, User user) {
 
-        Board newBoard = new Board();
-        for (Cell cell : words.getBoard()) {
-            int cellIndex = cell.getCellIndex();
-            char cellLetter = cell.getLetter();
-            newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
-        }
-        moveValidator.setNewBoard(newBoard);
+        moveValidator.setNewBoard(board);
+        responseService.clearResponse();
+        pointsService.clearScore();
 
         LinkedList<String> foundWords = moveValidator.checkMoveValidity();
         LinkedList<Cell> newCells = moveValidator.getNewCells();
 
-        responseService.clearResponse();
-        pointsService.clearScore();
 
         int wordPoints;
         Board actualBoard;
-        boolean isWordValid = false;
+        boolean isWordValid;
+        boolean isMoveValid = false;
 
         for (String foundWord : foundWords) {
             isWordValid = dictService.isWordInDict(foundWord);
@@ -80,20 +75,27 @@ public class GameRestController {
             if (isWordValid) {
                 wordPoints = pointsService.countWordScore(foundWord, newCells);
                 pointsService.addToRoundScore(wordPoints);
-                actualBoard = moveValidator.getNewBoard();
-                responseService.createResponseAfterMove(foundWord, wordPoints, actualBoard, true);
+                isMoveValid = true;
             } else {
-                actualBoard = moveValidator.getOldBoard();
-                responseService.createResponseAfterMove(foundWord, 0, actualBoard, false);
+                wordPoints = 0;
+                isMoveValid = false;
 
             }
+            responseService.createResponseAfterMove(foundWord, wordPoints, isWordValid);
+            if (!isMoveValid) {
+                break;
+            }
         }
+        actualBoard = moveValidator.setActualBoard(isMoveValid);
+
         int roundScore = pointsService.getRoundScore();
         int totalScore = responseAfterMove.getTotalScore();
         responseAfterMove.setRoundScore(roundScore);
         responseAfterMove.setTotalScore(totalScore + roundScore); //total score powinien być przypisany do usera, którego jezcze nie ma
 
-        moveValidator.updateState(isWordValid);
+        responseAfterMove.setActualBoard(actualBoard);
+        moveValidator.updateState(isMoveValid);
+
         return new ResponseEntity<>(responseAfterMove, HttpStatus.OK);
     }
 

@@ -19,7 +19,7 @@ public class ResponseService {
         responseAfterMove.clearRoundParams();
     }
 
-    public void createResponseAfterMove(String foundWord, int wordPoints, Board board, boolean valid) {
+    public void createResponseAfterMove(String foundWord, int wordPoints, boolean valid) {
         WordDetails composedWord = new WordDetails();
 
         composedWord.setValid(valid);
@@ -32,6 +32,6 @@ public class ResponseService {
             responseAfterMove.addMessage("Niestety, słowa: " + foundWord + " nie ma w słowniku języka polskiego.");
         }
         responseAfterMove.addWord(composedWord);
-        responseAfterMove.setActualBoard(board);
+//        responseAfterMove.setActualBoard(board);
     }
 }

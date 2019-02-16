@@ -16,12 +16,14 @@ public class MoveValidatorImpl implements MoveValidatorService {
     private LinkedList<String> newWords = new LinkedList<String>();
 
     private Board oldBoard;
-    private Board newBoard;
+    private Board newBoard = new Board();
 
 
     @Autowired
     public MoveValidatorImpl(Board board) {
         this.oldBoard = board;
+//        this.newBoard = board;
+
     }
 
     @Override
@@ -296,7 +298,23 @@ public class MoveValidatorImpl implements MoveValidatorService {
         return newBoard;
     }
 
-    public void setNewBoard(Board newBoard) {
+    public Board setActualBoard(boolean isMoveValid) {
+        if (isMoveValid) {
+            return newBoard;
+        }
+        return oldBoard;
+    }
+
+    public void setNewBoard(Board board) {
+
+        Board newBoard = new Board();
+        for (Cell cell : board.getBoard()) {
+            int cellIndex = cell.getCellIndex();
+            char cellLetter = cell.getLetter();
+            newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
+        }
+
+
         this.newBoard = newBoard;
     }
 
