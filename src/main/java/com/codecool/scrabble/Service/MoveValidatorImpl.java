@@ -310,7 +310,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
         Board newBoard = new Board();
         for (Cell cell : board.getBoard()) {
             int cellIndex = cell.getCellIndex();
-            char cellLetter = cell.getLetter();
+            char cellLetter = Character.toLowerCase(cell.getLetter());
             newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
         }
 

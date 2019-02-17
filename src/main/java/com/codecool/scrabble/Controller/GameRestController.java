@@ -56,6 +56,14 @@ public class GameRestController {
     @PostMapping(path = "/board")
     public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board board, User user) {
 
+
+//        Board newBoard = new Board();
+//        for (Cell cell : board.getBoard()) {
+//            int cellIndex = cell.getCellIndex();
+//            char cellLetter = Character.toLowerCase(cell.getLetter());
+//            newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
+//        }
+
         moveValidator.setNewBoard(board);
         responseService.clearResponse();
         pointsService.clearScore();

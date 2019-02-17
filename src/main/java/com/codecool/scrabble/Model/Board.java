@@ -30,7 +30,7 @@ public class Board {
     private void setBonuses() {
 
         int[] cellsIndexesWithDoubleLetterBonus = new int[]{4, 11, 206, 208, 300, 307, 314, 602, 606, 608, 612,
-                703, 711, 802, 808, 812, 1100, 1107, 1114, 1206, 1208, 1404, 1411};
+                703, 711, 802, 806, 808, 812, 1100, 1107, 1114, 1206, 1208, 1404, 1411};
 
         int[] cellIndexesWithTripleLetterBonus = new int[]{105, 109, 501, 509, 513, 901, 905, 909, 913, 1405, 1409};
 
