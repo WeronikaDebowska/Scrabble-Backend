@@ -61,7 +61,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
 //                Math.floor(newCells.getLast().getCellIndex() / 100) == Math.floor(newCells.getFirst().getCellIndex() / 100)) {
             return WordOrientation.HORIZONTAL;
         }
-        return null;
+        return WordOrientation.NONE;
     }
 
     public void updateState(boolean valid) {
@@ -74,8 +74,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
 
     public void findNewWord() {
 
-        int firstNewLetterIndex = newCells.getFirst().getCellIndex();
-        int lastNewLetterIndex = newCells.getLast().getCellIndex();
+
 
         if (onlyOneLetterAdded()) {
 
@@ -83,11 +82,17 @@ public class MoveValidatorImpl implements MoveValidatorService {
 
             if (anyLetterNextToHorizontally(singleLetterCell)) {
 
+                int firstNewLetterIndex = newCells.getFirst().getCellIndex();
+                int lastNewLetterIndex = newCells.getLast().getCellIndex();
+
                 firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, WordOrientation.HORIZONTAL);
                 lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, WordOrientation.HORIZONTAL);
                 findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.HORIZONTAL);
             }
             if (annyLetterNextToVertically(singleLetterCell)) {
+
+                int firstNewLetterIndex = newCells.getFirst().getCellIndex();
+                int lastNewLetterIndex = newCells.getLast().getCellIndex();
 
                 firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, WordOrientation.VERTICAL);
                 lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, WordOrientation.VERTICAL);
@@ -97,12 +102,17 @@ public class MoveValidatorImpl implements MoveValidatorService {
         } else {
 
             WordOrientation orientation = checkNewWordOrientation();
+            if (!orientation.equals(WordOrientation.NONE)) {
 
-            firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, orientation);
-            lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, orientation);
-            findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, orientation);
+                int firstNewLetterIndex = newCells.getFirst().getCellIndex();
+                int lastNewLetterIndex = newCells.getLast().getCellIndex();
 
-            findAdditionalWord(orientation);
+                firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, orientation);
+                lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, orientation);
+                findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, orientation);
+
+                findAdditionalWord(orientation);
+            }
         }
     }
 
@@ -205,6 +215,7 @@ public class MoveValidatorImpl implements MoveValidatorService {
                 break;
             case VERTICAL:
                 for (int cellIndex = firstNewLetterIndex; cellIndex <= lastNewLetterIndex; cellIndex += 100) {
+
                     newWord.append(newBoard.getCellByIndex(cellIndex).getLetter());
                 }
                 newWords.add(newWord.toString().toLowerCase());
@@ -320,7 +331,8 @@ public class MoveValidatorImpl implements MoveValidatorService {
 
     private enum WordOrientation {
         VERTICAL,
-        HORIZONTAL;
+        HORIZONTAL,
+        NONE;       // new letters are neither in one row nor in one column
     }
 
 

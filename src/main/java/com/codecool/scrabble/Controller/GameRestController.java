@@ -57,13 +57,6 @@ public class GameRestController {
     public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board board, User user) {
 
 
-//        Board newBoard = new Board();
-//        for (Cell cell : board.getBoard()) {
-//            int cellIndex = cell.getCellIndex();
-//            char cellLetter = Character.toLowerCase(cell.getLetter());
-//            newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
-//        }
-
         moveValidator.setNewBoard(board);
         responseService.clearResponse();
         pointsService.clearScore();
@@ -75,7 +68,7 @@ public class GameRestController {
         int wordPoints;
         Board actualBoard;
         boolean isWordValid;
-        boolean isMoveValid = false;
+        boolean isMoveValid = true;
 
         for (String foundWord : foundWords) {
             isWordValid = dictService.isWordInDict(foundWord);
@@ -83,20 +76,21 @@ public class GameRestController {
             if (isWordValid) {
                 wordPoints = pointsService.countWordScore(foundWord, newCells);
                 pointsService.addToRoundScore(wordPoints);
-                isMoveValid = true;
+//                isMoveValid = true;
             } else {
                 wordPoints = 0;
                 isMoveValid = false;
 
             }
             responseService.createResponseAfterMove(foundWord, wordPoints, isWordValid);
-            if (!isMoveValid) {
-                break;
-            }
+
         }
         actualBoard = moveValidator.setActualBoard(isMoveValid);
 
-        int roundScore = pointsService.getRoundScore();
+        int roundScore = 0;
+        if (isMoveValid) {
+            roundScore = pointsService.getRoundScore();
+        }
         int totalScore = responseAfterMove.getTotalScore();
         responseAfterMove.setRoundScore(roundScore);
         responseAfterMove.setTotalScore(totalScore + roundScore); //total score powinien być przypisany do usera, którego jezcze nie ma
@@ -108,15 +102,15 @@ public class GameRestController {
     }
 
     @GetMapping(path = "/draw")
-    public ResponseEntity<Character[]> drawLetters(@RequestParam(value = "draw", defaultValue = "7") int number) {
-        Character[] drawnLetters = drawService.drawLetters(number);
+    public ResponseEntity<DrawnLetters> drawLetters(@RequestParam(value = "draw", defaultValue = "7") int number) {
+        DrawnLetters drawnLetters = drawService.drawLetters(number);
         return new ResponseEntity<>(drawnLetters, HttpStatus.OK);
     }
 
     @PostMapping(path = "/draw")
-    public ResponseEntity<Character[]> getBackLetters(@RequestBody Character[] letters) {
+    public ResponseEntity<DrawnLetters> getBackLetters(@RequestBody Character[] letters) {
         int size = letters.length;
-        Character[] drawnLetters = drawService.drawLetters(size);
+        DrawnLetters drawnLetters = drawService.drawLetters(size);
         drawService.getLettersBack(letters);
         return new ResponseEntity<>(drawnLetters, HttpStatus.OK);
     }
