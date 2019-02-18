@@ -94,6 +94,12 @@ public class ResponseAfterMove {
         wordsDetails.clear();
         messages.clear();
         roundScore = 0;
+
+    }
+
+    public void reset() {
+        this.clearRoundParams();
+        totalScore = 0;
     }
 
     public void addToTotalScore(int points) {

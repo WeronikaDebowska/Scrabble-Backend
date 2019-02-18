@@ -110,5 +110,9 @@ public class Board {
         this.board = board;
     }
 
-
+    public void clearAll() {
+        for (Cell cell : board) {
+            cell.setLetter('-');
+        }
+    }
 }

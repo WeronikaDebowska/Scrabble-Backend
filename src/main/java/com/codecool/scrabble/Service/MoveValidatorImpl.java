@@ -352,5 +352,10 @@ public class MoveValidatorImpl implements MoveValidatorService {
         }
     }
 
+    public void clearBoard() {
+        newBoard.clearAll();
+        oldBoard.clearAll();
+    }
+
 }
 

@@ -53,6 +53,14 @@ public class GameRestController {
         }
     }
 
+
+    @GetMapping(path = "/restart")
+    public ResponseEntity<ResponseAfterMove> restart() {
+        moveValidator.clearBoard();
+        responseAfterMove.reset();
+        return new ResponseEntity<>(responseAfterMove, HttpStatus.OK);
+    }
+
     @PostMapping(path = "/board")
     public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board board, User user) {
 
