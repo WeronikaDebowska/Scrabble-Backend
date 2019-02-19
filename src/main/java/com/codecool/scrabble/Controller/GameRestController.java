@@ -22,8 +22,8 @@ public class GameRestController {
 //    private MockDictionaryService dictService;
 
 
-    private DrawService drawService;
-    private PointsCounterService pointsService;
+    private DrawServiceImpl drawService;
+    private PointsCounterServiceImpl pointsService;
     private MoveValidatorImpl moveValidator;
     private ResponseService responseService;
     private ResponseAfterMove responseAfterMove;
@@ -33,8 +33,8 @@ public class GameRestController {
     public GameRestController(
             DictionaryServiceImpl dictService,
 //            MockDictionaryService dictService,
-            PointsCounterService pointsService,
-            DrawService drawService,
+            PointsCounterServiceImpl pointsService,
+            DrawServiceImpl drawService,
             MoveValidatorImpl moveValidatorService,
             ResponseService responseService,
             ResponseAfterMove responseAfterMove) {
@@ -84,14 +84,12 @@ public class GameRestController {
             if (isWordValid) {
                 wordPoints = pointsService.countWordScore(foundWord, newCells);
                 pointsService.addToRoundScore(wordPoints);
-//                isMoveValid = true;
             } else {
                 wordPoints = 0;
                 isMoveValid = false;
 
             }
             responseService.createResponseAfterMove(foundWord, wordPoints, isWordValid);
-
         }
         actualBoard = moveValidator.setActualBoard(isMoveValid);
 

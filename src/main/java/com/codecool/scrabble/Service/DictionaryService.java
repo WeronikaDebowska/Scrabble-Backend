@@ -1,5 +1,5 @@
 package com.codecool.scrabble.Service;
 
 public interface DictionaryService {
-    Boolean isWordInDict(String word);
+    boolean isWordInDict(String word);
 }

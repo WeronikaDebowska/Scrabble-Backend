@@ -8,63 +8,106 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 
 @Service
-public class MoveValidatorImpl implements MoveValidatorService {
-
+public class MoveValidatorImpl {
 
     private LinkedList<Cell> newCells = new LinkedList<Cell>();
-
     private LinkedList<String> newWords = new LinkedList<String>();
 
     private Board oldBoard;
     private Board newBoard = new Board();
 
-
     @Autowired
     public MoveValidatorImpl(Board board) {
         this.oldBoard = board;
-//        this.newBoard = board;
-
     }
 
-    @Override
     public LinkedList<String> checkMoveValidity() {
+
         newCells.clear();
-
-        System.out.println();
-        trialBoardPrint();
         compareBoards();
-        findNewWord();
-
-        for (Cell cell : newCells) {
-            System.out.print(cell.getCellIndex() + " " + cell.getLetter());
+        if (noNewLettersOnBoard()) {
+            return newWords;
         }
-        System.out.println();
-
+        findAllNewWords();
         return newWords;
     }
 
-    private void compareBoards() {
+    private boolean noNewLettersOnBoard() {
+        return newCells.size() == 0;
+    }
 
-        for (Cell newCell : newBoard.getBoard()) {
-            if (!newCell.getLetter().equals(oldBoard.getCellByIndex(newCell.getCellIndex()).getLetter())) {
-                newCells.add(newCell);
+    private void compareBoards() {
+        for (Cell cell : newBoard.getBoard()) {
+            if (hasChanged(cell)) {
+                newCells.add(cell);
+            }
+        }
+    }
+
+    private boolean hasChanged(Cell newCell) {
+        int cellIndex = newCell.getCellIndex();
+        Character newLetter = newCell.getLetter();
+        Character oldLetter = oldBoard.getCellByIndex(cellIndex).getLetter();
+        return !(newLetter.equals(oldLetter));
+    }
+
+    public void findAllNewWords() {
+
+        int firstNewLetterIndex;
+        int lastNewLetterIndex;
+
+        if (onlyOneLetterAdded()) {
+
+            Cell singleLetterCell = newCells.get(0);
+            int singleLetterIndex = newCells.getFirst().getCellIndex();
+
+            if (anyLetterNextToHorizontally(singleLetterCell)) {
+                findNewWord(singleLetterIndex, singleLetterIndex, WordOrientation.HORIZONTAL);
+            }
+
+            if (annyLetterNextToVertically(singleLetterCell)) {
+                findNewWord(singleLetterIndex, singleLetterIndex, WordOrientation.VERTICAL);
+            }
+
+        } else {
+            WordOrientation orientation = checkNewWordOrientation();
+            if (!orientation.equals(WordOrientation.NONE)) {
+
+                firstNewLetterIndex = newCells.getFirst().getCellIndex();
+                lastNewLetterIndex = newCells.getLast().getCellIndex();
+
+                findNewWord(firstNewLetterIndex, lastNewLetterIndex, orientation);
+                findAdditionalWord(orientation);
             }
         }
     }
 
     private WordOrientation checkNewWordOrientation() {
 
-        if ((newCells.getLast().getCellIndex() - newCells.getFirst().getCellIndex()) % 100 == 0) {
+        int firstNewLetterIndex = newCells.getFirst().getCellIndex();
+        int lastNewLetterIndex = newCells.getLast().getCellIndex();
+
+        if (allCellsInOneColumn(firstNewLetterIndex, lastNewLetterIndex)) {
             return WordOrientation.VERTICAL;
         }
-        if (newCells.getLast().getCellIndex() - newCells.getFirst().getCellIndex() < 14) {
-//                Math.floor(newCells.getLast().getCellIndex() / 100) == Math.floor(newCells.getFirst().getCellIndex() / 100)) {
+        if (allCellsInOneRow(firstNewLetterIndex, lastNewLetterIndex)) {
             return WordOrientation.HORIZONTAL;
         }
         return WordOrientation.NONE;
     }
 
+    private boolean allCellsInOneRow(int firstNewLetterIndex, int lastNewLetterIndex) {
+        return lastNewLetterIndex - firstNewLetterIndex < 14;
+    }
+
+    private boolean allCellsInOneColumn(int firstNewLetterIndex, int lastNewLetterIndex) {
+        return (lastNewLetterIndex - firstNewLetterIndex) % 100 == 0;
+    }
+
     public void updateState(boolean valid) {
+        System.out.println();
+        trialBoardPrint();
+
         if (valid) {
             oldBoard = newBoard;
         }
@@ -72,53 +115,51 @@ public class MoveValidatorImpl implements MoveValidatorService {
         newWords.clear();
     }
 
-    public void findNewWord() {
-
-
-
-        if (onlyOneLetterAdded()) {
-
-            Cell singleLetterCell = newCells.get(0);
-
-            if (anyLetterNextToHorizontally(singleLetterCell)) {
-
-                int firstNewLetterIndex = newCells.getFirst().getCellIndex();
-                int lastNewLetterIndex = newCells.getLast().getCellIndex();
-
-                firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, WordOrientation.HORIZONTAL);
-                lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, WordOrientation.HORIZONTAL);
-                findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.HORIZONTAL);
-            }
-            if (annyLetterNextToVertically(singleLetterCell)) {
-
-                int firstNewLetterIndex = newCells.getFirst().getCellIndex();
-                int lastNewLetterIndex = newCells.getLast().getCellIndex();
-
-                firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, WordOrientation.VERTICAL);
-                lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, WordOrientation.VERTICAL);
-                findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.VERTICAL);
-
-            }
-        } else {
-
-            WordOrientation orientation = checkNewWordOrientation();
-            if (!orientation.equals(WordOrientation.NONE)) {
-
-                int firstNewLetterIndex = newCells.getFirst().getCellIndex();
-                int lastNewLetterIndex = newCells.getLast().getCellIndex();
-
-                firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, orientation);
-                lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, orientation);
-                findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, orientation);
-
-                findAdditionalWord(orientation);
-            }
-        }
+    private void findNewWord(int firstNewLetterIndex, int lastNewLetterIndex, WordOrientation orientation) {
+        firstNewLetterIndex = findFirstLetterOfNewWordIndex(firstNewLetterIndex, orientation);
+        lastNewLetterIndex = findLastLetterOfNewWordIndex(lastNewLetterIndex, orientation);
+        findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, orientation);
     }
 
     private boolean annyLetterNextToVertically(Cell singleLetterCell) {
         return (!singleLetterCell.inFirstRow() && oldBoard.getCellAbove(singleLetterCell).containsLetter())
-                || (!singleLetterCell.inLastRow() && oldBoard.getCellBellow(singleLetterCell).containsLetter());
+                || (!singleLetterCell.inLastRow() && oldBoard.getCellBelow(singleLetterCell).containsLetter());
+    }
+
+    private int findFirstLetterOfNewWordIndex(int firstNewLetterIndex, WordOrientation orientation) {
+
+        Cell beginningCell = newBoard.getCellByIndex(firstNewLetterIndex);
+
+        switch (orientation) {
+            case HORIZONTAL:
+                if (!beginningCell.inFirstColumn()) {
+                    Cell previousCell = newBoard.getCellLeft(beginningCell);
+                    while (!beginningCell.inFirstColumn() && previousCell.containsLetter()) {
+                        if (previousCell.containsLetter()) {
+                            beginningCell = previousCell;
+                            previousCell = newBoard.getCellLeft(beginningCell);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                return beginningCell.getCellIndex();
+
+            case VERTICAL:
+                if (!beginningCell.inFirstRow()) {
+                    Cell cellAbove = newBoard.getCellAbove(beginningCell);
+                    while (!beginningCell.inFirstRow() && cellAbove.containsLetter()) {
+                        if (cellAbove.containsLetter()) {
+                            beginningCell = cellAbove;
+                            cellAbove = newBoard.getCellAbove(beginningCell);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                return beginningCell.getCellIndex();
+        }
+        return firstNewLetterIndex;
     }
 
     private boolean anyLetterNextToHorizontally(Cell singleLetterCell) {
@@ -130,78 +171,98 @@ public class MoveValidatorImpl implements MoveValidatorService {
         return newCells.size() == 1;
     }
 
-    private int findFirstLetterOfNewWordIndex(int firstNewLetterIndex, WordOrientation orientation) {
-
-        Cell beginningCell = newBoard.getCellByIndex(firstNewLetterIndex);
-        switch (orientation) {
-            case HORIZONTAL:
-                if (firstNewLetterIndex % 100 > 0) {
-                    int i = 1;
-                    Cell previousCell = newBoard.getCellByIndex(firstNewLetterIndex - i);
-                    while ((firstNewLetterIndex - i) % 100 > 0 && previousCell.containsLetter()) {
-                        previousCell = newBoard.getCellByIndex(firstNewLetterIndex - i);
-                        if (previousCell.containsLetter()) {
-                            beginningCell = previousCell;
-                        } else {
-                            break;
-                        }
-                        i++;
-                    }
-                }
-                ;
-                return beginningCell.getCellIndex();
-            case VERTICAL:
-                if (firstNewLetterIndex >= 100) {
-                    int j = 1;
-                    Cell previousCell = newBoard.getCellByIndex(firstNewLetterIndex - j * 100);
-                    while (firstNewLetterIndex - j * 100 > 0 && previousCell.containsLetter()) {
-                        previousCell = newBoard.getCellByIndex(firstNewLetterIndex - j * 100);
-                        if (previousCell.containsLetter()) {
-                            beginningCell = previousCell;
-                        } else {
-                            break;
-                        }
-                        j++;
-                    }
-                }
-                return beginningCell.getCellIndex();
-        }
-        return firstNewLetterIndex;
-    }
-
     private int findLastLetterOfNewWordIndex(int lastNewLetterIndex, WordOrientation orientation) {
 
         Cell endingCell = newBoard.getCellByIndex(lastNewLetterIndex);
         switch (orientation) {
             case HORIZONTAL:
-                if (lastNewLetterIndex % 100 < 14) {
-                    int i = 1;
-                    Cell nextCell = newBoard.getCellByIndex(lastNewLetterIndex + i);
-                    while ((lastNewLetterIndex + i) % 100 <= 14 && nextCell.containsLetter()) {
-                        nextCell = newBoard.getCellByIndex(lastNewLetterIndex + i);
+                if (!endingCell.inLastColumn()) {
+                    Cell nextCell = newBoard.getCellRight(endingCell);
+                    while (!endingCell.inLastColumn() && nextCell.containsLetter()) {
                         if (nextCell.containsLetter()) {
                             endingCell = nextCell;
+                            nextCell = newBoard.getCellRight(endingCell);
+                        } else {
+                            break;
                         }
-                        i++;
                     }
                 }
-                ;
                 return endingCell.getCellIndex();
             case VERTICAL:
-                if (lastNewLetterIndex < 1400) {
-                    int j = 1;
-                    Cell nextCell = newBoard.getCellByIndex(lastNewLetterIndex + j * 100);
-                    while (lastNewLetterIndex + j * 100 <= 1414 && nextCell.containsLetter()) {
-                        nextCell = newBoard.getCellByIndex(lastNewLetterIndex + j * 100);
+                if (!endingCell.inLastRow()) {
+                    Cell nextCell = newBoard.getCellBelow(endingCell);
+                    while (!endingCell.inLastRow() && nextCell.containsLetter()) {
                         if (nextCell.containsLetter()) {
                             endingCell = nextCell;
+                            nextCell = newBoard.getCellBelow(endingCell);
+                        } else {
+                            break;
                         }
-                        j++;
                     }
                 }
                 return endingCell.getCellIndex();
         }
         return lastNewLetterIndex;
+    }
+
+    public void findAdditionalWord(WordOrientation orientation) {
+        LinkedList<Cell> cellsToCheck = new LinkedList<>();
+
+
+        switch (orientation) {
+
+            case HORIZONTAL:
+                Cell cellAbove;
+                Cell cellBellow;
+
+                for (Cell cell : newCells) {
+
+                    int currentIndex = cell.getCellIndex();
+                    if (!cell.inFirstRow()) {
+                        cellAbove = oldBoard.getCellByIndex(currentIndex - 100);
+                        if (cellAbove.containsLetter()) {
+                            cellsToCheck.add(cellAbove);
+                            break;
+                        }
+                    }
+                    if (!cell.inLastRow()) {
+                        cellBellow = oldBoard.getCellByIndex(currentIndex + 100);
+                        if (cellBellow.containsLetter()) {
+                            cellsToCheck.add(cellBellow);
+                        }
+                    }
+                }
+                for (Cell cell : cellsToCheck) {
+                    int cellIndex = cell.getCellIndex();
+                    findNewWord(cellIndex, cellIndex, WordOrientation.VERTICAL);
+                }
+                break;
+            case VERTICAL:
+                Cell cellRight;
+                Cell cellLeft;
+
+                for (Cell cell : newCells) {
+
+                    int currentIndex = cell.getCellIndex();
+                    if (!cell.inFirstColumn()) {
+                        cellLeft = oldBoard.getCellByIndex(currentIndex - 1);
+                        if (cellLeft.containsLetter()) {
+                            cellsToCheck.add(cellLeft);
+                            break;
+                        }
+                    }
+                    if (!cell.inLastColumn()) {
+                        cellRight = oldBoard.getCellByIndex(currentIndex + 1);
+                        if (cellRight.containsLetter()) {
+                            cellsToCheck.add(cellRight);
+                        }
+                    }
+                }
+                for (Cell cell : cellsToCheck) {
+                    int cellIndex = cell.getCellIndex();
+                    findNewWord(cellIndex, cellIndex, WordOrientation.HORIZONTAL);
+                }
+        }
     }
 
     private void findLettersInsideWord(int firstNewLetterIndex, int lastNewLetterIndex, WordOrientation orientation) {
@@ -223,70 +284,28 @@ public class MoveValidatorImpl implements MoveValidatorService {
         }
     }
 
-    public void findAdditionalWord(WordOrientation orientation) {
-        LinkedList<Cell> cellsToCheck = new LinkedList<>();
+    public void clearBoard() {
+        newBoard.clearAll();
+        oldBoard.clearAll();
+    }
 
-        int firstNewLetterIndex;
-        int lastNewLetterIndex;
 
-        switch (orientation) {
-
-            case HORIZONTAL:
-                Cell cellAbove;
-                Cell cellBellow;
-
-                for (Cell cell : newCells) {
-
-                    int currentIndex = cell.getCellIndex();
-                    if (currentIndex >= 100) {
-                        cellAbove = oldBoard.getCellByIndex(currentIndex - 100);
-                        if (cellAbove.containsLetter()) {
-                            cellsToCheck.add(cellAbove);
-                            break;
-                        }
-                    }
-
-                    if (currentIndex < 1400) {
-                        cellBellow = oldBoard.getCellByIndex(currentIndex + 100);
-                        if (cellBellow.containsLetter()) {
-                            cellsToCheck.add(cellBellow);
-                        }
-                    }
-                }
-                for (Cell cell : cellsToCheck) {
-                    firstNewLetterIndex = findFirstLetterOfNewWordIndex(cell.getCellIndex(), WordOrientation.VERTICAL);
-                    lastNewLetterIndex = findLastLetterOfNewWordIndex(cell.getCellIndex(), WordOrientation.VERTICAL);
-                    findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.VERTICAL);
-                }
-                break;
-            case VERTICAL:
-                Cell cellRight;
-                Cell cellLeft;
-
-                for (Cell cell : newCells) {
-
-                    int currentIndex = cell.getCellIndex();
-                    if (currentIndex % 100 > 0) {
-                        cellLeft = oldBoard.getCellByIndex(currentIndex - 1);
-                        if (cellLeft.containsLetter()) {
-                            cellsToCheck.add(cellLeft);
-                            break;
-                        }
-                    }
-                    if (currentIndex % 100 < 14) {
-                        cellRight = oldBoard.getCellByIndex(currentIndex + 1);
-                        if (cellRight.containsLetter()) {
-                            cellsToCheck.add(cellRight);
-                        }
-                    }
-                }
-                for (Cell cell : cellsToCheck) {
-                    firstNewLetterIndex = findFirstLetterOfNewWordIndex(cell.getCellIndex(), WordOrientation.HORIZONTAL);
-                    lastNewLetterIndex = findLastLetterOfNewWordIndex(cell.getCellIndex(), WordOrientation.HORIZONTAL);
-                    findLettersInsideWord(firstNewLetterIndex, lastNewLetterIndex, WordOrientation.HORIZONTAL);
-                }
+    public Board setActualBoard(boolean isMoveValid) {
+        if (isMoveValid) {
+            return newBoard;
         }
+        return oldBoard;
+    }
 
+    public void setNewBoard(Board board) {
+
+        Board newBoard = new Board();
+        for (Cell cell : board.getBoard()) {
+            int cellIndex = cell.getCellIndex();
+            char cellLetter = Character.toLowerCase(cell.getLetter());
+            newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
+        }
+        this.newBoard = newBoard;
     }
 
     public LinkedList<Cell> getNewCells() {
@@ -307,26 +326,6 @@ public class MoveValidatorImpl implements MoveValidatorService {
 
     public Board getNewBoard() {
         return newBoard;
-    }
-
-    public Board setActualBoard(boolean isMoveValid) {
-        if (isMoveValid) {
-            return newBoard;
-        }
-        return oldBoard;
-    }
-
-    public void setNewBoard(Board board) {
-
-        Board newBoard = new Board();
-        for (Cell cell : board.getBoard()) {
-            int cellIndex = cell.getCellIndex();
-            char cellLetter = Character.toLowerCase(cell.getLetter());
-            newBoard.getCellByIndex(cellIndex).setLetter(cellLetter);
-        }
-
-
-        this.newBoard = newBoard;
     }
 
     private enum WordOrientation {
@@ -350,11 +349,6 @@ public class MoveValidatorImpl implements MoveValidatorService {
             }
             System.out.println();
         }
-    }
-
-    public void clearBoard() {
-        newBoard.clearAll();
-        oldBoard.clearAll();
     }
 
 }

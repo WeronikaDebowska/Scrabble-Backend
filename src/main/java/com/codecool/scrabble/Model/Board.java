@@ -8,6 +8,8 @@ public class Board {
     private int size = 15;
     private Cell[] board = new Cell[size * size];
 
+    private int indexInc = 100;
+
 
     public Board() {
         createBoard();
@@ -15,7 +17,7 @@ public class Board {
     }
 
     private void createBoard() {
-        int indexInc = 100;
+
         int i = 0;
 
         for (int row = 0; row < size; row++) {
@@ -59,7 +61,7 @@ public class Board {
 
     public Cell getCellByIndex(int index) {
 
-        for (Cell cell : board) {
+        for (Cell cell : board) {               //TODO
             if (cell.getCellIndex() == index) {
                 return cell;
             }
@@ -68,11 +70,11 @@ public class Board {
     }
 
     public Cell getCellAbove(Cell cell) {
-        return this.getCellByIndex(cell.getCellIndex() - 100);
+        return this.getCellByIndex(cell.getCellIndex() - indexInc);
     }
 
-    public Cell getCellBellow(Cell cell) {
-        return this.getCellByIndex(cell.getCellIndex() + 100);
+    public Cell getCellBelow(Cell cell) {
+        return this.getCellByIndex(cell.getCellIndex() + indexInc);
     }
 
     public Cell getCellRight(Cell cell) {

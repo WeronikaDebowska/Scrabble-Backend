@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 
 @Service
-public class PointsCounterServiceImpl implements PointsCounterService {
+public class PointsCounterServiceImpl {
 
     private LetterPool pool;
     private LetterParams letterParams;
@@ -23,7 +23,6 @@ public class PointsCounterServiceImpl implements PointsCounterService {
         this.roundScore = 0;
     }
 
-    @Override
     public int countWordScore(String word, LinkedList<Cell> newCells) {
         int wordScore = 0;
         int wordBonus = 1;

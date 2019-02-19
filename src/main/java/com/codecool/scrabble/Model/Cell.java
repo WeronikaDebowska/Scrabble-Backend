@@ -1,8 +1,5 @@
 package com.codecool.scrabble.Model;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class Cell {
 
     int cellIndex;

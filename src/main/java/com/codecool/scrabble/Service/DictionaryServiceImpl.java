@@ -16,12 +16,12 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public Boolean isWordInDict(String term) {
+    public boolean isWordInDict(String term) {
         Word word = dictRepository.findDictionaryByWord(term);
         if (word == null) {
-            return Boolean.FALSE;
+            return false;
         } else {
-            return Boolean.TRUE;
+            return true;
         }
     }
 }
