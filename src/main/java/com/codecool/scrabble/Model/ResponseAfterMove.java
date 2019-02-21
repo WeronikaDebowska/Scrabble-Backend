@@ -10,7 +10,6 @@ public class ResponseAfterMove {
 
     private boolean isMoveValid;
     private LinkedList<WordDetails> wordsDetails = new LinkedList<>();
-    private LinkedList<String> messages = new LinkedList<>();
     private User user;
     private int totalScore;
     private int roundScore;
@@ -49,10 +48,6 @@ public class ResponseAfterMove {
         this.roundScore = roundScore;
     }
 
-    public void addMessage(String message) {
-        messages.add(message);
-    }
-
     public void addWord(WordDetails word) {
         wordsDetails.add(word);
     }
@@ -74,14 +69,6 @@ public class ResponseAfterMove {
         this.wordsDetails = wordsDetails;
     }
 
-    public LinkedList<String> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(LinkedList<String> messages) {
-        this.messages = messages;
-    }
-
     public boolean setValidity() {
         for (WordDetails wordDetails : wordsDetails) {
             if (!wordDetails.isValid()) {
@@ -101,7 +88,6 @@ public class ResponseAfterMove {
     public void clearRoundParams() {
         isMoveValid = false;
         wordsDetails.clear();
-        messages.clear();
         roundScore = 0;
 
     }

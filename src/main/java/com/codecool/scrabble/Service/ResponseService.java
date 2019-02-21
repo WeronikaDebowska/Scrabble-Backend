@@ -25,12 +25,6 @@ public class ResponseService {
         composedWord.setValid(valid);
         composedWord.setWord(foundWord);
         composedWord.setPoints(wordPoints);
-
-        if (valid) {
-            responseAfterMove.addMessage("Brawo! Ułożyłeś słowo: " + foundWord + " warte " + wordPoints + " pkt.");
-        } else {
-            responseAfterMove.addMessage("Niestety, słowa: " + foundWord + " nie ma w słowniku języka polskiego.");
-        }
         responseAfterMove.addWord(composedWord);
 //        responseAfterMove.setActualBoard(board);
     }

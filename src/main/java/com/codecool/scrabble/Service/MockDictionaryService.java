@@ -31,16 +31,26 @@ public class MockDictionaryService implements DictionaryService {
         dictionary.add("pikieta");
         dictionary.add("wrona");
         dictionary.add("car");
+        dictionary.add("czar");
         dictionary.add("bar");
         dictionary.add("ar");
         dictionary.add("kok");
         dictionary.add("kokaina");
         dictionary.add("rata");
-
+        dictionary.add("scrabble");
+        dictionary.add("scra");
+        dictionary.add("ble");
+        dictionary.add("weronika");
+        dictionary.add("nika");
+        dictionary.add("roni");
+        dictionary.add("wer");
+        dictionary.add("ewe");
+        dictionary.add("ewelina");
+        dictionary.add("lina");
     }
 
     @Override
-    public Boolean isWordInDict(String word) {
+    public boolean isWordInDict(String word) {
         return dictionary.contains(word);
     }
 }
