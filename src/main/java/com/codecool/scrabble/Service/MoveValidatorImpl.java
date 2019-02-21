@@ -2,6 +2,7 @@ package com.codecool.scrabble.Service;
 
 import com.codecool.scrabble.Model.Board;
 import com.codecool.scrabble.Model.Cell;
+import com.codecool.scrabble.Model.CellParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,13 @@ public class MoveValidatorImpl {
 
     private Board oldBoard;
     private Board newBoard = new Board();
+    private CellParams cellParams;
 
     @Autowired
-    public MoveValidatorImpl(Board board) {
+    public MoveValidatorImpl(Board board, CellParams cellParams) {
         this.oldBoard = board;
+        this.cellParams = cellParams;
+
     }
 
     public LinkedList<String> checkMoveValidity() {
@@ -205,6 +209,7 @@ public class MoveValidatorImpl {
         return lastNewLetterIndex;
     }
 
+
     public void findAdditionalWord(WordOrientation orientation) {
         LinkedList<Cell> cellsToCheck = new LinkedList<>();
 
@@ -291,9 +296,11 @@ public class MoveValidatorImpl {
 
 
     public Board setActualBoard(boolean isMoveValid) {
+
         if (isMoveValid) {
             return newBoard;
         }
+        newBoard = oldBoard;
         return oldBoard;
     }
 
@@ -335,7 +342,7 @@ public class MoveValidatorImpl {
     }
 
 
-    private void trialBoardPrint() {
+    public void trialBoardPrint() {
 
         System.out.println("  -------- oldBoard --------       -------- newBoard --------");
 

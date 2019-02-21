@@ -1,5 +1,6 @@
 package com.codecool.scrabble.Model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
@@ -10,18 +11,26 @@ public class ResponseAfterMove {
     private boolean isMoveValid;
     private LinkedList<WordDetails> wordsDetails = new LinkedList<>();
     private LinkedList<String> messages = new LinkedList<>();
-    private String user;
-    private int totalScore = 0;
+    private User user;
+    private int totalScore;
     private int roundScore;
     private Board actualBoard;
 
+    @Autowired
+    public ResponseAfterMove(User user) {
+        this.user = user;
+    }
 
-    public String getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(User user) {
         this.user = user;
+    }
+
+    public void actualizeTotalScore() {
+        this.totalScore = user.getTotalScore();
     }
 
     public int getTotalScore() {

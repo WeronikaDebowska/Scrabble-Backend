@@ -17,33 +17,14 @@ import java.util.LinkedList;
 
 public class GameRestController {
 
-
-    private DictionaryServiceImpl dictService;
-//    private MockDictionaryService dictService;
-
-
-    private DrawServiceImpl drawService;
-    private PointsCounterServiceImpl pointsService;
-    private MoveValidatorImpl moveValidator;
-    private ResponseService responseService;
-    private ResponseAfterMove responseAfterMove;
+    private GameController gameController;
 
 
     @Autowired
     public GameRestController(
-            DictionaryServiceImpl dictService,
-//            MockDictionaryService dictService,
-            PointsCounterServiceImpl pointsService,
-            DrawServiceImpl drawService,
-            MoveValidatorImpl moveValidatorService,
-            ResponseService responseService,
-            ResponseAfterMove responseAfterMove) {
-        this.dictService = dictService;
-        this.pointsService = pointsService;
-        this.drawService = drawService;
-        this.moveValidator = moveValidatorService;
-        this.responseService = responseService;
-        this.responseAfterMove = responseAfterMove;
+            GameController gameController) {
+
+        this.gameController = gameController;
     }
 
     @PostMapping
@@ -53,71 +34,28 @@ public class GameRestController {
         }
     }
 
-
     @GetMapping(path = "/restart")
     public ResponseEntity<ResponseAfterMove> restart() {
-        moveValidator.clearBoard();
-        responseAfterMove.reset();
-        return new ResponseEntity<>(responseAfterMove, HttpStatus.OK);
+
+        ResponseAfterMove response = gameController.restart();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(path = "/board")
     public ResponseEntity<ResponseAfterMove> postWord(@RequestBody Board board, User user) {
-
-
-        moveValidator.setNewBoard(board);
-        responseService.clearResponse();
-        pointsService.clearScore();
-
-        LinkedList<String> foundWords = moveValidator.checkMoveValidity();
-        LinkedList<Cell> newCells = moveValidator.getNewCells();
-
-
-        int wordPoints;
-        Board actualBoard;
-        boolean isWordValid;
-        boolean isMoveValid = true;
-
-        for (String foundWord : foundWords) {
-            isWordValid = dictService.isWordInDict(foundWord);
-
-            if (isWordValid) {
-                wordPoints = pointsService.countWordScore(foundWord, newCells);
-                pointsService.addToRoundScore(wordPoints);
-            } else {
-                wordPoints = 0;
-                isMoveValid = false;
-
-            }
-            responseService.createResponseAfterMove(foundWord, wordPoints, isWordValid);
-        }
-        actualBoard = moveValidator.setActualBoard(isMoveValid);
-
-        int roundScore = 0;
-        if (isMoveValid) {
-            roundScore = pointsService.getRoundScore();
-        }
-        int totalScore = responseAfterMove.getTotalScore();
-        responseAfterMove.setRoundScore(roundScore);
-        responseAfterMove.setTotalScore(totalScore + roundScore); //total score powinien być przypisany do usera, którego jezcze nie ma
-
-        responseAfterMove.setActualBoard(actualBoard);
-        moveValidator.updateState(isMoveValid);
-
-        return new ResponseEntity<>(responseAfterMove, HttpStatus.OK);
+        ResponseAfterMove response = gameController.serveMove(board);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/draw")
-    public ResponseEntity<DrawnLetters> drawLetters(@RequestParam(value = "draw", defaultValue = "7") int number) {
-        DrawnLetters drawnLetters = drawService.drawLetters(number);
-        return new ResponseEntity<>(drawnLetters, HttpStatus.OK);
+    public ResponseEntity<ResponseAfterDrawing> drawLetters(@RequestParam(value = "draw", defaultValue = "7") int number) {
+        ResponseAfterDrawing response = gameController.drawLetters(number);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(path = "/draw")
-    public ResponseEntity<DrawnLetters> getBackLetters(@RequestBody Character[] letters) {
-        int size = letters.length;
-        DrawnLetters drawnLetters = drawService.drawLetters(size);
-        drawService.getLettersBack(letters);
-        return new ResponseEntity<>(drawnLetters, HttpStatus.OK);
+    public ResponseEntity<ResponseAfterDrawing> getBackLetters(@RequestBody Character[] letters) {
+        ResponseAfterDrawing response = gameController.drawLetters(letters);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

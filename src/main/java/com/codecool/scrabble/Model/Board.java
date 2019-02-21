@@ -1,17 +1,21 @@
 package com.codecool.scrabble.Model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Board {
 
     private int size = 15;
     private Cell[] board = new Cell[size * size];
-
     private int indexInc = 100;
 
+//    private CellParams cellParams;
 
+    @Autowired
     public Board() {
+//        this.cellParams = cellParams;
         createBoard();
         setBonuses();
     }
@@ -19,11 +23,12 @@ public class Board {
     private void createBoard() {
 
         int i = 0;
-
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
+                int cellIndex = row * indexInc + column;
+//                    board[i] = new Cell(cellIndex, cellParams.getLetterBonus(cellIndex), cellParams.getWordBonus(cellIndex));
                 board[i] = new Cell();
-                board[i].setCellIndex(row * indexInc + column);
+                board[i].setCellIndex(cellIndex);
                 i++;
             }
         }
@@ -34,7 +39,7 @@ public class Board {
         int[] cellsIndexesWithDoubleLetterBonus = new int[]{4, 11, 206, 208, 300, 307, 314, 602, 606, 608, 612,
                 703, 711, 802, 806, 808, 812, 1100, 1107, 1114, 1206, 1208, 1404, 1411};
 
-        int[] cellIndexesWithTripleLetterBonus = new int[]{105, 109, 501, 509, 513, 901, 905, 909, 913, 1405, 1409};
+        int[] cellIndexesWithTripleLetterBonus = new int[]{105, 109, 501, 505, 509, 513, 901, 905, 909, 913, 1405, 1409};
 
         int[] cellIndexesWithDoubleWordBonus = new int[]{101, 113, 202, 212, 303, 311, 404, 410, 1004, 1010, 1103,
                 1111, 1202, 1212, 1301, 1313};
@@ -84,6 +89,7 @@ public class Board {
     public Cell getCellLeft(Cell cell) {
         return this.getCellByIndex(cell.getCellIndex() - 1);
     }
+
 
     public int getLetterBonus(int index) {
         Cell cell = getCellByIndex(index);

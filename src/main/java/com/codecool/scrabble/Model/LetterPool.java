@@ -10,6 +10,11 @@ import java.util.Random;
 public class LetterPool {
 
     private LetterParams letterParams;
+
+    public LinkedList<Character> getLetterPool() {
+        return letterPool;
+    }
+
     private LinkedList<Character> letterPool = new LinkedList<>();
 
 
@@ -60,9 +65,14 @@ public class LetterPool {
         return letterPool.poll();
     }
 
-
     public void getLetterBack(Character letter) {
         letterPool.add(letter);
+    }
+
+    public void resetPool() {
+        letterPool.clear();
+        initializeLetterPool();
+        randomizePool();
     }
 
 

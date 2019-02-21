@@ -8,9 +8,10 @@ public class Cell {
     int wordBonus;
 
     public Cell() {
-        letterBonus = 1;
-        wordBonus = 1;
+        this.letterBonus = 1;
+        this.wordBonus = 1;
     }
+
 
     public Character getLetter() {
 
