@@ -66,12 +66,11 @@ public class Board {
 
     public Cell getCellByIndex(int index) {
 
-        for (Cell cell : board) {               //TODO
-            if (cell.getCellIndex() == index) {
-                return cell;
-            }
-        }
-        return null;
+        int row = index / 100;
+        int column = index % 100;
+        int boardIndex = row * size + column;
+
+        return this.board[boardIndex];
     }
 
     public Cell getCellAbove(Cell cell) {
