@@ -62,7 +62,6 @@ public class LetterParams {
 
     Character[] getAllLetters() {
         Character[] allLetters = new Character[letterPointsAmount.size()];
-//        return (Character[]) letterPointsAmount.keySet().toArray();
         int i = 0;
         for (Character letterKey : letterPointsAmount.keySet()) {
             allLetters[i] = letterKey;

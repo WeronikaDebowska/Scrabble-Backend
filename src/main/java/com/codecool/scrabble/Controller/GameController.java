@@ -127,6 +127,7 @@ public class GameController {
     public ResponseAfterMove restart() {
         moveValidator.clearBoard();
         drawService.resetLetterPool();
+        user.setTotalScore(0);
         responseAfterMove.reset();
 
         return responseAfterMove;

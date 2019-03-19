@@ -4,18 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Board {
 
     private int size = 15;
     private Cell[] board = new Cell[size * size];
     private int indexInc = 100;
 
-//    private CellParams cellParams;
 
     @Autowired
     public Board() {
-//        this.cellParams = cellParams;
         createBoard();
         setBonuses();
     }
@@ -26,7 +23,6 @@ public class Board {
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
                 int cellIndex = row * indexInc + column;
-//                    board[i] = new Cell(cellIndex, cellParams.getLetterBonus(cellIndex), cellParams.getWordBonus(cellIndex));
                 board[i] = new Cell();
                 board[i].setCellIndex(cellIndex);
                 i++;
@@ -66,11 +62,11 @@ public class Board {
 
     public Cell getCellByIndex(int index) {
 
-        int row = index / 100;
-        int column = index % 100;
-        int boardIndex = row * size + column;
+        int row = index / indexInc;
+        int column = index % indexInc;
+        int cellIndex = row * size + column;
 
-        return this.board[boardIndex];
+        return this.board[cellIndex];
     }
 
     public Cell getCellAbove(Cell cell) {
@@ -111,10 +107,6 @@ public class Board {
 
     public Cell[] getBoard() {
         return board;
-    }
-
-    public void setBoard(Cell[] board) {
-        this.board = board;
     }
 
     public void clearAll() {
